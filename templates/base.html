@@ -1,0 +1,46 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Smart Attendance{% endblock %} | Smart Attendance</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{% url 'accounts:home' %}">Smart Attendance</a>
+        {% if user.is_authenticated %}
+        <nav>
+            {% if user_role == "HR_ADMIN" %}
+                <a href="{% url 'attendance:upload' %}">Upload</a>
+                <a href="{% url 'attendance:batch_list' %}">Imports</a>
+            {% endif %}
+            {% if user_role == "HR_ADMIN" or user_role == "MANAGER" %}
+                <a href="{% url 'attendance:daily_list' %}">Daily attendance</a>
+                <a href="{% url 'organization:employee_list' %}">Employees</a>
+            {% endif %}
+            {% if user_profile %}
+                <a href="{% url 'organization:employee_detail' user_profile.employee_code %}">My attendance</a>
+            {% endif %}
+            <a href="{% url 'attendance:correction_list' %}">Corrections</a>
+            <a href="{% url 'leaves:list' %}">Leaves</a>
+            {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+        </nav>
+        <form method="post" action="{% url 'accounts:logout' %}" class="logout">
+            {% csrf_token %}
+            <span class="who">{{ user.username }} &middot; {{ user_role }}</span>
+            <button type="submit" class="link">Log out</button>
+        </form>
+        {% endif %}
+    </header>
+
+    <main class="container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Delete correction{% endblock %}
+{% block content %}
+<div class="card narrow">
+    <h1>Delete correction #{{ correction.pk }}?</h1>
+    <p>This removes your pending request for {{ correction.attendance_log }}.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button danger">Yes, delete</button>
+        <a class="button secondary" href="{% url 'attendance:correction_detail' correction.pk %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

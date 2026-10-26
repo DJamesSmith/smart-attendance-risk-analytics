@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Leaves{% endblock %}
+{% block content %}
+<h1>Leave requests</h1>
+<form method="get" class="filters">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+            <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="button">Filter</button>
+    {% if profile %}<a class="button secondary" href="{% url 'leaves:create' %}">Apply for leave</a>{% endif %}
+</form>
+<table>
+    <tr><th>Employee</th><th>Type</th><th>Dates</th><th>Reason</th><th>Document</th><th>Status</th><th>Action</th></tr>
+    {% for row in rows %}
+    {% with leave=row.leave %}
+    <tr>
+        <td>{{ leave.employee.employee_code }} &middot; {{ leave.employee.user.get_full_name }}</td>
+        <td>{{ leave.get_leave_type_display }}</td>
+        <td>{{ leave.start_date }} to {{ leave.end_date }}</td>
+        <td>{{ leave.reason|truncatechars:60 }}</td>
+        <td>{% if leave.supporting_document %}<a href="{{ leave.supporting_document.url }}">View</a>{% else %}-{% endif %}</td>
+        <td><span class="badge {{ leave.status|lower }}">{{ leave.get_status_display }}</span>
+            {% if leave.reviewer_remarks %}<div class="muted">{{ leave.reviewer_remarks }}</div>{% endif %}</td>
+        <td>
+            {% if row.can_review %}
+            <form method="post" action="{% url 'leaves:review' leave.pk %}" class="inline">
+                {% csrf_token %}
+                <input type="text" name="reviewer_remarks" placeholder="Remarks">
+                <button type="submit" name="decision" value="approve" class="button small">Approve</button>
+                <button type="submit" name="decision" value="reject" class="button small danger">Reject</button>
+            </form>
+            {% elif leave.employee == profile and leave.status == "PENDING" %}
+            <form method="post" action="{% url 'leaves:cancel' leave.pk %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="button small secondary">Cancel</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endwith %}
+    {% empty %}
+    <tr><td colspan="7" class="muted">No leave requests found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

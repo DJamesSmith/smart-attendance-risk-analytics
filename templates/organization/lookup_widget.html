@@ -1,0 +1,8 @@
+<div class="card">
+    <h2>Quick employee lookup</h2>
+    <form id="lookup-form" class="filters" data-url="{% url 'organization:employee_lookup' %}">
+        <input type="text" name="code" placeholder="Employee code, e.g. EMP1001" maxlength="10" required>
+        <button type="submit" class="button">Look up</button>
+    </form>
+    <div id="lookup-result"></div>
+</div>

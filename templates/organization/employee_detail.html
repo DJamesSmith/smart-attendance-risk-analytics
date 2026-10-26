@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.employee_code }}{% endblock %}
+{% block content %}
+<h1>{{ employee.user.get_full_name|default:employee.user.username }} <span class="muted">{{ employee.employee_code }}</span></h1>
+
+<div class="grid four">
+    <div class="stat"><span>Department</span><strong>{{ employee.department.name }}</strong></div>
+    <div class="stat"><span>Manager</span><strong>{{ employee.manager.employee_code|default:"-" }}</strong></div>
+    <div class="stat"><span>Days with issues (30 days)</span><strong>{{ anomaly_rows|length }}</strong></div>
+    <div class="stat"><span>Open corrections</span><strong>{{ open_corrections|length }}</strong></div>
+</div>
+
+<p>
+    <a class="button secondary" href="{% url 'organization:employee_attendance_json' employee.employee_code %}">View JSON</a>
+    {% if is_self %}
+        <a class="button" href="{% url 'attendance:correction_create' %}">Raise correction</a>
+        <a class="button" href="{% url 'leaves:create' %}">Apply for leave</a>
+    {% endif %}
+</p>
+
+<div class="card">
+    <h2>Last 30 days</h2>
+    <table>
+        <tr><th>Date</th><th>First IN</th><th>Last OUT</th><th>Hours</th><th>Late (min)</th><th>Status</th></tr>
+        {% for row in daily_rows %}
+        <tr>
+            <td>{{ row.punch_date|date:"D d M" }}</td>
+            <td>{{ row.first_in|time:"H:i"|default:"-" }}</td>
+            <td>{{ row.last_out|time:"H:i"|default:"-" }}</td>
+            <td>{{ row.working_hours }}</td>
+            <td>{{ row.late_minutes }}</td>
+            <td><span class="badge {{ row.status|lower }}">{{ row.status }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="muted">No punches in the last 30 days.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="grid two">
+    <div class="card">
+        <h2>Open corrections</h2>
+        <ul>
+            {% for correction in open_corrections %}
+                <li><a href="{% url 'attendance:correction_detail' correction.pk %}">#{{ correction.pk }}</a> {{ correction.attendance_log.punch_date }} &middot; {{ correction.get_status_display }}</li>
+            {% empty %}
+                <li class="muted">None</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card">
+        <h2>Recent leaves</h2>
+        <ul>
+            {% for leave in leaves %}
+                <li>{{ leave.start_date }} to {{ leave.end_date }} &middot; {{ leave.get_leave_type_display }} &middot; {{ leave.get_status_display }}</li>
+            {% empty %}
+                <li class="muted">None</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

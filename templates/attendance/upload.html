@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Upload attendance{% endblock %}
+{% block content %}
+<h1>Upload attendance file</h1>
+<div class="grid two">
+    <div class="card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="button">Upload and process</button>
+        </form>
+        <p class="muted">Accepted: .csv or .xlsx, up to 5 MB. Required columns: employee_code, employee_name, department,
+            punch_date, punch_time, punch_type, shift_start, shift_end. Optional: device_location, leave_type, manager_code, remarks.</p>
+    </div>
+    <div class="card">
+        <h2>Recent imports</h2>
+        <table>
+            <tr><th>File</th><th>Status</th><th>Rows</th></tr>
+            {% for batch in recent_batches %}
+            <tr>
+                <td><a href="{% url 'attendance:batch_detail' batch.pk %}">{{ batch.original_filename }}</a></td>
+                <td><span class="badge {{ batch.status|lower }}">{{ batch.get_status_display }}</span></td>
+                <td>{{ batch.processed_rows }} / {{ batch.total_rows }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="muted">No imports yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

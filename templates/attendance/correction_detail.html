@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Correction #{{ correction.pk }}{% endblock %}
+{% block content %}
+<h1>Correction #{{ correction.pk }} <span class="badge {{ correction.status|lower }}">{{ correction.get_status_display }}</span></h1>
+
+<div class="grid two">
+    <div class="card">
+        <h2>Request</h2>
+        <dl>
+            <dt>Employee</dt><dd>{{ correction.requested_by }}</dd>
+            <dt>Manager</dt><dd>{{ correction.requested_by.manager|default:"No manager (HR reviews)" }}</dd>
+            <dt>Type</dt><dd>{{ correction.get_correction_type_display }}</dd>
+            <dt>Punch on record</dt><dd>{{ correction.attendance_log.punch_date }} {{ correction.attendance_log.punch_time|time:"H:i" }} ({{ correction.attendance_log.punch_type }})</dd>
+            <dt>Requested</dt><dd>{{ correction.requested_punch_date|default:correction.attendance_log.punch_date }} {{ correction.requested_punch_time|time:"H:i" }}</dd>
+            <dt>Reason</dt><dd>{{ correction.reason|linebreaksbr }}</dd>
+        </dl>
+        {% if can_edit %}
+            <a class="button secondary" href="{% url 'attendance:correction_update' correction.pk %}">Edit</a>
+            <a class="button danger" href="{% url 'attendance:correction_delete' correction.pk %}">Delete</a>
+        {% endif %}
+    </div>
+    <div class="card">
+        <h2>Review trail</h2>
+        <dl>
+            <dt>Manager review</dt><dd>{{ correction.manager_reviewed_by|default:"Pending" }}</dd>
+            <dt>Manager remarks</dt><dd>{{ correction.manager_remarks|default:"-" }}</dd>
+            <dt>HR review</dt><dd>{{ correction.reviewed_by|default:"Pending" }}</dd>
+            <dt>HR remarks</dt><dd>{{ correction.reviewer_remarks|default:"-" }}</dd>
+        </dl>
+    </div>
+</div>
+
+{% if manager_form %}
+<div class="card">
+    <h2>Manager approval</h2>
+    <form method="post" action="{% url 'attendance:correction_manager_review' correction.pk %}">
+        {% csrf_token %}
+        {{ manager_form.as_p }}
+        <button type="submit" class="button">Submit review</button>
+    </form>
+</div>
+{% endif %}
+
+{% if hr_form %}
+<div class="card">
+    <h2>HR finalization</h2>
+    <p class="muted">Approving applies the change to the attendance log.</p>
+    <form method="post" action="{% url 'attendance:correction_finalize' correction.pk %}">
+        {% csrf_token %}
+        {{ hr_form.as_p }}
+        <button type="submit" class="button">Finalize</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

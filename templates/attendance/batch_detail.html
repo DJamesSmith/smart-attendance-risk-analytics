@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Import #{{ batch.pk }}{% endblock %}
+{% block content %}
+<h1>Import #{{ batch.pk }} &middot; {{ batch.original_filename }}</h1>
+<div class="grid three">
+    <div class="stat"><span>Status</span><strong><span class="badge {{ batch.status|lower }}">{{ batch.get_status_display }}</span></strong></div>
+    <div class="stat"><span>Rows in file</span><strong>{{ batch.total_rows }}</strong></div>
+    <div class="stat"><span>New punches saved</span><strong>{{ batch.processed_rows }}</strong></div>
+</div>
+
+{% if batch.error_message %}
+<div class="alert {% if batch.status == 'FAILED' %}alert-error{% else %}alert-info{% endif %}">{{ batch.error_message }}</div>
+{% endif %}
+
+{% if reports %}
+<div class="card">
+    <h2>Generated reports</h2>
+    {% for report in reports %}
+        <a class="button secondary" href="{{ report.url }}" download>{{ report.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if corrections_needed %}
+<div class="card">
+    <h2>Correction required</h2>
+    <table>
+        <tr><th>Employee</th><th>Date</th><th>Missing</th><th>Recorded punch</th></tr>
+        {% for row in corrections_needed %}
+        <tr><td>{{ row.employee_code }} &middot; {{ row.employee_name }}</td><td>{{ row.punch_date }}</td><td>{{ row.missing_punch }}</td><td>{{ row.recorded_punch }}</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if anomalies %}
+<div class="card">
+    <h2>Anomalies (first 50)</h2>
+    <table>
+        <tr><th>Row</th><th>Employee</th><th>Date</th><th>Type</th><th>Details</th></tr>
+        {% for row in anomalies %}
+        <tr><td>{{ row.row_number|default:"-" }}</td><td>{{ row.employee_code }}</td><td>{{ row.punch_date }}</td><td>{{ row.anomaly_type }}</td><td>{{ row.details }}</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Corrections{% endblock %}
+{% block content %}
+<h1>Attendance corrections</h1>
+<form method="get" class="filters">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+            <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="button">Filter</button>
+    {% if can_create %}<a class="button secondary" href="{% url 'attendance:correction_create' %}">Raise correction</a>{% endif %}
+</form>
+<table>
+    <tr><th>#</th><th>Employee</th><th>Type</th><th>Punch</th><th>Requested</th><th>Status</th><th>Raised</th></tr>
+    {% for correction in corrections %}
+    <tr>
+        <td><a href="{% url 'attendance:correction_detail' correction.pk %}">#{{ correction.pk }}</a></td>
+        <td>{{ correction.requested_by.employee_code }} &middot; {{ correction.requested_by.user.get_full_name }}</td>
+        <td>{{ correction.get_correction_type_display }}</td>
+        <td>{{ correction.attendance_log.punch_date }} {{ correction.attendance_log.punch_time|time:"H:i" }} {{ correction.attendance_log.punch_type }}</td>
+        <td>{{ correction.requested_punch_date|default:"same day" }} {{ correction.requested_punch_time|time:"H:i" }}</td>
+        <td><span class="badge {{ correction.status|lower }}">{{ correction.get_status_display }}</span></td>
+        <td>{{ correction.created_at|date:"d M Y" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="muted">No corrections found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

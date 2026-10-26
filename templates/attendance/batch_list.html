@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Imports{% endblock %}
+{% block content %}
+<h1>Attendance imports</h1>
+<form method="get" class="filters">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+            <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="button">Filter</button>
+    <a class="button secondary" href="{% url 'attendance:upload' %}">New upload</a>
+</form>
+<table>
+    <tr><th>#</th><th>File</th><th>Uploaded by</th><th>Status</th><th>New punches / rows</th><th>Uploaded</th></tr>
+    {% for batch in batches %}
+    <tr>
+        <td>{{ batch.pk }}</td>
+        <td><a href="{% url 'attendance:batch_detail' batch.pk %}">{{ batch.original_filename }}</a></td>
+        <td>{{ batch.uploaded_by.username }}</td>
+        <td><span class="badge {{ batch.status|lower }}">{{ batch.get_status_display }}</span></td>
+        <td>{{ batch.processed_rows }} / {{ batch.total_rows }}</td>
+        <td>{{ batch.created_at|date:"d M Y H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="muted">No imports found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

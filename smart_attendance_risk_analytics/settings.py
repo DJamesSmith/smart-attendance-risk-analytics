@@ -38,6 +38,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',                    # added CORS middleware for testing in other devices
+    'accounts.middleware.RequestAuditMiddleware',               # added for request auditing
+    'accounts.middleware.RoleAccessMiddleware',                 # added for role access
 ]
 
 ROOT_URLCONF = 'smart_attendance_risk_analytics.urls'
@@ -113,6 +117,28 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FormParser',
     ]
+}
+
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+        "audit_file": {"class": "logging.FileHandler", "filename": LOG_DIR / "audit.log", "formatter": "simple"},
+    },
+    "loggers": {
+        "audit": {"handlers": ["audit_file"], "level": "INFO", "propagate": False},
+        "attendance": {"handlers": ["console"], "level": "INFO", "propagate": False},
+    },
 }
 
 # NOTE:

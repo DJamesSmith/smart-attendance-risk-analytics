@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Daily attendance{% endblock %}
+{% block content %}
+<h1>Daily attendance &middot; {{ selected_date|date:"d M Y" }}</h1>
+
+<form method="get" class="filters">
+    {{ form.date }}
+    {{ form.department }}
+    <button type="submit" class="button">Show</button>
+    {% if form.errors %}<span class="error">{{ form.errors.as_text }}</span>{% endif %}
+</form>
+
+<div class="grid four">
+    <div class="stat"><span>Present</span><strong>{{ status_counts.PRESENT }}</strong></div>
+    <div class="stat"><span>Late</span><strong>{{ status_counts.LATE }}</strong></div>
+    <div class="stat"><span>Missing punch</span><strong>{{ status_counts.MISSING_PUNCH }}</strong></div>
+    <div class="stat"><span>On leave</span><strong>{{ status_counts.ON_LEAVE }}</strong></div>
+</div>
+
+{% include "organization/lookup_widget.html" %}
+
+<table>
+    <tr><th>Employee</th><th>Department</th><th>First IN</th><th>Last OUT</th><th>Hours</th><th>Late (min)</th><th>Early exit (min)</th><th>Status</th></tr>
+    {% for row in rows %}
+    <tr>
+        <td><a href="{% url 'organization:employee_detail' row.employee_code %}">{{ row.employee_code }}</a> &middot; {{ row.employee_name }}</td>
+        <td>{{ row.department }}</td>
+        <td>{{ row.first_in|time:"H:i"|default:"-" }}</td>
+        <td>{{ row.last_out|time:"H:i"|default:"-" }}</td>
+        <td>{{ row.working_hours }}</td>
+        <td>{{ row.late_minutes }}</td>
+        <td>{{ row.early_exit_minutes }}</td>
+        <td><span class="badge {{ row.status|lower }}">{{ row.status }}</span></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8" class="muted">No attendance found for this date.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
