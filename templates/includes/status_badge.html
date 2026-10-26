@@ -1,0 +1,11 @@
+{% if status == "PRESENT" or status == "COMPLETED" or status == "APPROVED" or status == "FINALIZED" %}
+<span class="badge text-bg-success">{{ label|default:status }}</span>
+{% elif status == "LATE" or status == "PENDING" or status == "PROCESSING" or status == "MANAGER_APPROVED" %}
+<span class="badge text-bg-warning">{{ label|default:status }}</span>
+{% elif status == "MISSING_PUNCH" or status == "FAILED" or status == "REJECTED" or status == "MANAGER_REJECTED" or status == "HR_REJECTED" %}
+<span class="badge text-bg-danger">{{ label|default:status }}</span>
+{% elif status == "ON_LEAVE" %}
+<span class="badge text-bg-info">{{ label|default:status }}</span>
+{% else %}
+<span class="badge text-bg-secondary">{{ label|default:status }}</span>
+{% endif %}

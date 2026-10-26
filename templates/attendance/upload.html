@@ -1,31 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Upload attendance{% endblock %}
 {% block content %}
-<h1>Upload attendance file</h1>
-<div class="grid two">
-    <div class="card">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="button">Upload and process</button>
-        </form>
-        <p class="muted">Accepted: .csv or .xlsx, up to 5 MB. Required columns: employee_code, employee_name, department,
-            punch_date, punch_time, punch_type, shift_start, shift_end. Optional: device_location, leave_type, manager_code, remarks.</p>
+<h1 class="h3 mb-4">Upload attendance file</h1>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% include "includes/form_fields.html" %}
+                    <button type="submit" class="btn btn-primary">Upload and process</button>
+                </form>
+                <p class="form-text mt-3 mb-0">Accepted: .csv or .xlsx, up to 5 MB. Required columns: employee_code, employee_name, department,
+                    punch_date, punch_time, punch_type, shift_start, shift_end. Optional: device_location, leave_type, manager_code, remarks.</p>
+            </div>
+        </div>
     </div>
-    <div class="card">
-        <h2>Recent imports</h2>
-        <table>
-            <tr><th>File</th><th>Status</th><th>Rows</th></tr>
-            {% for batch in recent_batches %}
-            <tr>
-                <td><a href="{% url 'attendance:batch_detail' batch.pk %}">{{ batch.original_filename }}</a></td>
-                <td><span class="badge {{ batch.status|lower }}">{{ batch.get_status_display }}</span></td>
-                <td>{{ batch.processed_rows }} / {{ batch.total_rows }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3" class="muted">No imports yet.</td></tr>
-            {% endfor %}
-        </table>
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header">Recent imports</div>
+            <table class="table mb-0">
+                <thead><tr><th>File</th><th>Status</th><th>Rows</th></tr></thead>
+                <tbody>
+                {% for batch in recent_batches %}
+                <tr>
+                    <td><a href="{% url 'attendance:batch_detail' batch.pk %}">{{ batch.original_filename }}</a></td>
+                    <td>{% include "includes/status_badge.html" with status=batch.status label=batch.get_status_display %}</td>
+                    <td>{{ batch.processed_rows }} / {{ batch.total_rows }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="text-muted">No imports yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

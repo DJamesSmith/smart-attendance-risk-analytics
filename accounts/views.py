@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import LoginForm, RegistrationForm, find_claimable_user
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -11,7 +11,7 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("accounts:home")
 
-    form = AuthenticationForm(request, data=request.POST or None)
+    form = LoginForm(request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
         next_url = request.GET.get("next", "")
@@ -20,6 +20,24 @@ def login_view(request):
         return redirect("accounts:home")
 
     return render(request, "accounts/login.html", {"form": form})
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("accounts:home")
+
+    claimable_user = None
+    if request.method == "POST":
+        claimable_user = find_claimable_user(request.POST.get("employee_code", ""))
+
+    form = RegistrationForm(request.POST or None, instance=claimable_user)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        login(request, user)
+        messages.success(request, f"Welcome, {user.first_name}! Your account is ready.")
+        return redirect("accounts:home")
+
+    return render(request, "accounts/register.html", {"form": form})
 
 
 @require_POST

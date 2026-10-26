@@ -1,8 +1,68 @@
-<div class="card">
-    <h2>Quick employee lookup</h2>
-    <form id="lookup-form" class="filters" data-url="{% url 'organization:employee_lookup' %}">
-        <input type="text" name="code" placeholder="Employee code, e.g. EMP1001" maxlength="10" required>
-        <button type="submit" class="button">Look up</button>
-    </form>
-    <div id="lookup-result"></div>
+<div class="card shadow-sm mb-4">
+    <div class="card-header">Quick employee lookup</div>
+    <div class="card-body">
+        <form id="lookup-form" class="row g-2" data-url="{% url 'organization:employee_lookup' %}">
+            <div class="col-sm-6 col-md-4">
+                <input type="text" name="code" class="form-control" placeholder="Employee code, e.g. EMP1001" maxlength="10" required>
+            </div>
+            <div class="col-auto"><button type="submit" class="btn btn-primary">Look up</button></div>
+        </form>
+        <div id="lookup-result" class="mt-3"></div>
+    </div>
 </div>
+
+<script>
+document.getElementById("lookup-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const form = event.target;
+    const box = document.getElementById("lookup-result");
+    const code = form.elements.code.value.trim();
+    box.textContent = "Searching...";
+
+    try {
+        const response = await fetch(form.dataset.url + "?code=" + encodeURIComponent(code), {
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
+        const body = await response.json();
+        box.innerHTML = "";
+
+        if (body.status !== "success") {
+            const alert = document.createElement("div");
+            alert.className = "alert alert-danger mb-0";
+            const details = body.errors ? Object.values(body.errors).flat().join(" ") : "";
+            alert.textContent = body.message + " " + details;
+            box.appendChild(alert);
+            return;
+        }
+
+        const employee = body.data;
+        const rows = [
+            ["Name", employee.name],
+            ["Department", employee.department],
+            ["Manager", employee.manager_code],
+            ["Email", employee.email],
+            ["Open corrections", employee.open_corrections],
+            ["Pending leaves", employee.pending_leaves],
+        ];
+        employee.recent_punches.forEach(function (punch) {
+            rows.push(["Punch " + punch.punch_date, punch.punch_time + " " + punch.punch_type + " " + punch.device_location]);
+        });
+
+        const table = document.createElement("table");
+        table.className = "table table-sm mb-2";
+        rows.forEach(function (row) {
+            const tableRow = table.insertRow();
+            tableRow.insertCell().textContent = row[0];
+            tableRow.insertCell().textContent = row[1] === null || row[1] === "" ? "-" : row[1];
+        });
+        box.appendChild(table);
+
+        const link = document.createElement("a");
+        link.href = "/employees/" + employee.employee_code + "/";
+        link.textContent = "Open full details";
+        box.appendChild(link);
+    } catch (error) {
+        box.textContent = "Could not reach the server. Please try again.";
+    }
+});
+</script>

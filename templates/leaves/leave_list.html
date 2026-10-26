@@ -1,48 +1,56 @@
 {% extends "base.html" %}
 {% block title %}Leaves{% endblock %}
 {% block content %}
-<h1>Leave requests</h1>
-<form method="get" class="filters">
-    <select name="status">
-        <option value="">All statuses</option>
-        {% for value, label in statuses %}
-            <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="button">Filter</button>
-    {% if profile %}<a class="button secondary" href="{% url 'leaves:create' %}">Apply for leave</a>{% endif %}
+<h1 class="h3 mb-4">Leave requests</h1>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            {% for value, label in statuses %}
+                <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto"><button type="submit" class="btn btn-primary">Filter</button></div>
+    {% if profile %}<div class="col-auto"><a class="btn btn-outline-primary" href="{% url 'leaves:create' %}">Apply for leave</a></div>{% endif %}
 </form>
-<table>
-    <tr><th>Employee</th><th>Type</th><th>Dates</th><th>Reason</th><th>Document</th><th>Status</th><th>Action</th></tr>
-    {% for row in rows %}
-    {% with leave=row.leave %}
-    <tr>
-        <td>{{ leave.employee.employee_code }} &middot; {{ leave.employee.user.get_full_name }}</td>
-        <td>{{ leave.get_leave_type_display }}</td>
-        <td>{{ leave.start_date }} to {{ leave.end_date }}</td>
-        <td>{{ leave.reason|truncatechars:60 }}</td>
-        <td>{% if leave.supporting_document %}<a href="{{ leave.supporting_document.url }}">View</a>{% else %}-{% endif %}</td>
-        <td><span class="badge {{ leave.status|lower }}">{{ leave.get_status_display }}</span>
-            {% if leave.reviewer_remarks %}<div class="muted">{{ leave.reviewer_remarks }}</div>{% endif %}</td>
-        <td>
-            {% if row.can_review %}
-            <form method="post" action="{% url 'leaves:review' leave.pk %}" class="inline">
-                {% csrf_token %}
-                <input type="text" name="reviewer_remarks" placeholder="Remarks">
-                <button type="submit" name="decision" value="approve" class="button small">Approve</button>
-                <button type="submit" name="decision" value="reject" class="button small danger">Reject</button>
-            </form>
-            {% elif leave.employee == profile and leave.status == "PENDING" %}
-            <form method="post" action="{% url 'leaves:cancel' leave.pk %}" class="inline">
-                {% csrf_token %}
-                <button type="submit" class="button small secondary">Cancel</button>
-            </form>
-            {% endif %}
-        </td>
-    </tr>
-    {% endwith %}
-    {% empty %}
-    <tr><td colspan="7" class="muted">No leave requests found.</td></tr>
-    {% endfor %}
-</table>
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light"><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Reason</th><th>Document</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for row in rows %}
+            {% with leave=row.leave %}
+            <tr>
+                <td>{{ leave.employee.employee_code }} &middot; {{ leave.employee.user.get_full_name }}</td>
+                <td>{{ leave.get_leave_type_display }}</td>
+                <td>{{ leave.start_date }} to {{ leave.end_date }}</td>
+                <td>{{ leave.reason|truncatechars:60 }}</td>
+                <td>{% if leave.supporting_document %}<a href="{{ leave.supporting_document.url }}">View</a>{% else %}-{% endif %}</td>
+                <td>{% include "includes/status_badge.html" with status=leave.status label=leave.get_status_display %}
+                    {% if leave.reviewer_remarks %}<div class="small text-muted">{{ leave.reviewer_remarks }}</div>{% endif %}</td>
+                <td>
+                    {% if row.can_review %}
+                    <form method="post" action="{% url 'leaves:review' leave.pk %}" class="d-flex flex-wrap gap-1">
+                        {% csrf_token %}
+                        <input type="text" name="reviewer_remarks" class="form-control form-control-sm" placeholder="Remarks">
+                        <button type="submit" name="decision" value="approve" class="btn btn-sm btn-success">Approve</button>
+                        <button type="submit" name="decision" value="reject" class="btn btn-sm btn-danger">Reject</button>
+                    </form>
+                    {% elif leave.employee == profile and leave.status == "PENDING" %}
+                    <form method="post" action="{% url 'leaves:cancel' leave.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endwith %}
+            {% empty %}
+            <tr><td colspan="7" class="text-muted">No leave requests found.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

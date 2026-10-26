@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-2">Create your account</h1>
+                <p class="text-muted small mb-4">
+                    If HR has already imported your attendance, enter the same employee code and your account will be linked to it.
+                    New accounts get the Employee role; HR can change roles later.
+                </p>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% include "includes/form_fields.html" %}
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <p class="text-center mt-3 mb-0">Already registered? <a href="{% url 'accounts:login' %}">Log in</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

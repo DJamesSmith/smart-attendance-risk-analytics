@@ -1,55 +1,67 @@
 {% extends "base.html" %}
 {% block title %}Correction #{{ correction.pk }}{% endblock %}
 {% block content %}
-<h1>Correction #{{ correction.pk }} <span class="badge {{ correction.status|lower }}">{{ correction.get_status_display }}</span></h1>
+<h1 class="h3 mb-4">Correction #{{ correction.pk }} {% include "includes/status_badge.html" with status=correction.status label=correction.get_status_display %}</h1>
 
-<div class="grid two">
-    <div class="card">
-        <h2>Request</h2>
-        <dl>
-            <dt>Employee</dt><dd>{{ correction.requested_by }}</dd>
-            <dt>Manager</dt><dd>{{ correction.requested_by.manager|default:"No manager (HR reviews)" }}</dd>
-            <dt>Type</dt><dd>{{ correction.get_correction_type_display }}</dd>
-            <dt>Punch on record</dt><dd>{{ correction.attendance_log.punch_date }} {{ correction.attendance_log.punch_time|time:"H:i" }} ({{ correction.attendance_log.punch_type }})</dd>
-            <dt>Requested</dt><dd>{{ correction.requested_punch_date|default:correction.attendance_log.punch_date }} {{ correction.requested_punch_time|time:"H:i" }}</dd>
-            <dt>Reason</dt><dd>{{ correction.reason|linebreaksbr }}</dd>
-        </dl>
-        {% if can_edit %}
-            <a class="button secondary" href="{% url 'attendance:correction_update' correction.pk %}">Edit</a>
-            <a class="button danger" href="{% url 'attendance:correction_delete' correction.pk %}">Delete</a>
-        {% endif %}
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Request</div>
+            <div class="card-body">
+                <dl class="row mb-3">
+                    <dt class="col-sm-4">Employee</dt><dd class="col-sm-8">{{ correction.requested_by }}</dd>
+                    <dt class="col-sm-4">Manager</dt><dd class="col-sm-8">{{ correction.requested_by.manager|default:"No manager (HR reviews)" }}</dd>
+                    <dt class="col-sm-4">Type</dt><dd class="col-sm-8">{{ correction.get_correction_type_display }}</dd>
+                    <dt class="col-sm-4">Punch on record</dt><dd class="col-sm-8">{{ correction.attendance_log.punch_date }} {{ correction.attendance_log.punch_time|time:"H:i" }} ({{ correction.attendance_log.punch_type }})</dd>
+                    <dt class="col-sm-4">Requested</dt><dd class="col-sm-8">{{ correction.requested_punch_date|default:correction.attendance_log.punch_date }} {{ correction.requested_punch_time|time:"H:i" }}</dd>
+                    <dt class="col-sm-4">Reason</dt><dd class="col-sm-8">{{ correction.reason|linebreaksbr }}</dd>
+                </dl>
+                {% if can_edit %}
+                    <a class="btn btn-outline-primary btn-sm" href="{% url 'attendance:correction_update' correction.pk %}">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'attendance:correction_delete' correction.pk %}">Delete</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="card">
-        <h2>Review trail</h2>
-        <dl>
-            <dt>Manager review</dt><dd>{{ correction.manager_reviewed_by|default:"Pending" }}</dd>
-            <dt>Manager remarks</dt><dd>{{ correction.manager_remarks|default:"-" }}</dd>
-            <dt>HR review</dt><dd>{{ correction.reviewed_by|default:"Pending" }}</dd>
-            <dt>HR remarks</dt><dd>{{ correction.reviewer_remarks|default:"-" }}</dd>
-        </dl>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Review trail</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Manager review</dt><dd class="col-sm-8">{{ correction.manager_reviewed_by|default:"Pending" }}</dd>
+                    <dt class="col-sm-4">Manager remarks</dt><dd class="col-sm-8">{{ correction.manager_remarks|default:"-" }}</dd>
+                    <dt class="col-sm-4">HR review</dt><dd class="col-sm-8">{{ correction.reviewed_by|default:"Pending" }}</dd>
+                    <dt class="col-sm-4">HR remarks</dt><dd class="col-sm-8">{{ correction.reviewer_remarks|default:"-" }}</dd>
+                </dl>
+            </div>
+        </div>
     </div>
 </div>
 
 {% if manager_form %}
-<div class="card">
-    <h2>Manager approval</h2>
-    <form method="post" action="{% url 'attendance:correction_manager_review' correction.pk %}">
-        {% csrf_token %}
-        {{ manager_form.as_p }}
-        <button type="submit" class="button">Submit review</button>
-    </form>
+<div class="card shadow-sm mb-4">
+    <div class="card-header">Manager approval</div>
+    <div class="card-body">
+        <form method="post" action="{% url 'attendance:correction_manager_review' correction.pk %}">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" with form=manager_form %}
+            <button type="submit" class="btn btn-primary">Submit review</button>
+        </form>
+    </div>
 </div>
 {% endif %}
 
 {% if hr_form %}
-<div class="card">
-    <h2>HR finalization</h2>
-    <p class="muted">Approving applies the change to the attendance log.</p>
-    <form method="post" action="{% url 'attendance:correction_finalize' correction.pk %}">
-        {% csrf_token %}
-        {{ hr_form.as_p }}
-        <button type="submit" class="button">Finalize</button>
-    </form>
+<div class="card shadow-sm">
+    <div class="card-header">HR finalization</div>
+    <div class="card-body">
+        <p class="text-muted small">Approving applies the change to the attendance log.</p>
+        <form method="post" action="{% url 'attendance:correction_finalize' correction.pk %}">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" with form=hr_form %}
+            <button type="submit" class="btn btn-success">Finalize</button>
+        </form>
+    </div>
 </div>
 {% endif %}
 {% endblock %}

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="card narrow">
-    <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
-    <p>Your account is not linked to an employee profile yet. Please contact HR.</p>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h4">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+        <p class="mb-0">Your account is not linked to an employee profile yet. Please contact HR.</p>
+    </div>
 </div>
 {% endblock %}

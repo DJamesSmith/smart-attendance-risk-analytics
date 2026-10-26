@@ -7,7 +7,7 @@ from .utils import get_role
 
 audit_logger = logging.getLogger("audit")
 
-PUBLIC_PATHS = ("/accounts/login/", "/admin/", "/static/", "/api/")
+PUBLIC_PATHS = ("/accounts/login/", "/accounts/register/", "/admin/", "/static/", "/api/")
 
 ROLE_RULES = {
     "attendance:upload": ("HR_ADMIN",),
