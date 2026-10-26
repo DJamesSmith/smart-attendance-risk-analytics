@@ -9,15 +9,15 @@ from django.views.decorators.http import require_POST
 from accounts.utils import get_employee_profile, is_hr, is_manager
 from leaves.models import LeaveRequest
 
-from .forms import (
+from ..forms import (
     AttendanceCorrectionForm,
     AttendanceUploadForm,
     DailyAttendanceFilterForm,
     HRFinalizeForm,
     ManagerReviewForm,
 )
-from .models import AttendanceCorrection, AttendanceImportBatch, AttendanceLog
-from .services import apply_correction, build_daily_rows, import_attendance_file, read_report, report_links
+from ..models import AttendanceCorrection, AttendanceImportBatch, AttendanceLog
+from ..services import apply_correction, build_daily_rows, import_attendance_file, read_report, report_links
 
 DEPARTMENT_COOKIE = "last_department"
 DATE_SESSION_KEY = "selected_attendance_date"

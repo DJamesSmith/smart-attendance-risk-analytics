@@ -1,6 +1,5 @@
 from rest_framework import serializers
-
-from .models import Employee
+from .models import Department, Employee
 
 
 class EmployeeLookupSerializer(serializers.ModelSerializer):
@@ -17,3 +16,15 @@ class EmployeeLookupSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         return obj.user.get_full_name() or obj.user.username
+
+
+class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
+    employee_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Department
+        fields = ("url", "id", "name", "code", "description", "is_active", "employee_count", "created_at", "updated_at")
+        extra_kwargs = {"url": {"view_name": "api-department-detail"}}
+
+    def get_employee_count(self, obj):
+        return obj.employees.count()
