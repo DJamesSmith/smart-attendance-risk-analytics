@@ -119,7 +119,7 @@ def write_edge_cases():
     (EDGE_DIR / "wrong_format.txt").write_text("this is not an attendance file\n")
 
 
-def main():
+if __name__ == "__main__":
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     rows = build_rows()
     write_csv(OUTPUT_DIR / "attendance_sample.csv", HEADER, rows + INVALID_ROWS)
@@ -127,7 +127,3 @@ def main():
     write_edge_cases()
     print(f"CSV rows: {len(rows) + len(INVALID_ROWS)}, Excel rows: {len(rows)}")
     print(f"Files written to {OUTPUT_DIR}")
-
-
-if __name__ == "__main__":
-    main()
