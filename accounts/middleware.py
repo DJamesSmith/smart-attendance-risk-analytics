@@ -19,6 +19,7 @@ ROLE_RULES = {
     "organization:employee_list": ("HR_ADMIN", "MANAGER"),
     "organization:employee_lookup": ("HR_ADMIN", "MANAGER"),
     "leaves:review": ("HR_ADMIN", "MANAGER"),
+    "analytics:dashboard": ("HR_ADMIN", "MANAGER"),
 }
 
 

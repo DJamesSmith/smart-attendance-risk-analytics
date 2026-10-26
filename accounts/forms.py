@@ -91,3 +91,36 @@ class RegistrationForm(BootstrapFormMixin, UserCreationForm):
                 department=self.cleaned_data["department"],
             )
         return user
+
+class HRRegistrationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("username", "first_name", "last_name", "email")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name in ("first_name", "last_name", "email"):
+            self.fields[name].required = True
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = User.Role.HR_ADMIN
+        user.is_active = False
+        user.email_verified = False
+        if commit:
+            user.save()
+        return user
+
+
+class OTPVerifyForm(forms.Form):
+    email = forms.EmailField()
+    otp = forms.RegexField(regex=r"^\d{6}$", error_messages={"invalid": "The code must be exactly 6 digits."})
+
+
+class APILoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(strip=False)
+
+
+class RefreshTokenForm(forms.Form):
+    refresh = forms.CharField()

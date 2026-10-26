@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from .forms import LoginForm, RegistrationForm, find_claimable_user
+from ..forms import LoginForm, RegistrationForm, find_claimable_user
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-from .utils import get_employee_profile, is_hr, is_manager
+from ..utils import get_employee_profile, is_hr, is_manager
 
 
 def login_view(request):
