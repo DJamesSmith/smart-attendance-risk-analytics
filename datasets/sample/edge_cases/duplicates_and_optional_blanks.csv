@@ -1,0 +1,4 @@
+employee_code,employee_name,department,punch_date,punch_time,device_location,punch_type,shift_start,shift_end
+EMP1001,Rahul Verma,CS,2026-10-22,09:00,,IN,09:00,18:00
+EMP1001,Rahul Verma,CS,2026-10-22,09:00,,IN,09:00,18:00
+EMP1001,Rahul Verma,CS,2026-10-22,18:00,,OUT,09:00,18:00
