@@ -1,0 +1,95 @@
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+env_*/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Django-generated files
+staticfiles/
+media/
+!media/.gitkeep
+
+# Coverage and test artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+junit.xml
+
+# Type checking and linting
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Machine learning artifacts
+artifacts/
+models/
+checkpoints/
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.keras
+*.weights.h5
+*.pb
+saved_model/
+tensorboard/
+
+# NLTK downloaded resources
+nltk_data/
+**/nltk_data/
+
+# Dataset outputs and generated reports
+reports/generated/
+datasets/generated/
+daily_summary.csv
+anomaly_report.csv
+correction_required.csv
+
+# Uploaded private files
+uploads/
+private_media/
+
+# Operating system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+*.orig
