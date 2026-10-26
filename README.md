@@ -160,7 +160,7 @@ smart-attendance-risk-analytics/
 │   └── sample/
 ├── reports/
 ├── tests/
-├── docs/
+├── assets/
 ├── sql_queries.sql
 ├── notes.txt
 ├── manage.py
@@ -356,22 +356,19 @@ During development, configure Django to serve static assets and uploaded media c
 
 ## Screenshots
 
-Replace each placeholder image with a real screenshot saved in `docs/screenshots/` using the same file name.
+Replace each placeholder image with a real screenshot saved in `assets/screenshots/` using the same file name.
 
 ### Login
-![Login page](docs/screenshots/login.png)
+![Login page](assets/screenshots/login.png)
 
 ### Register
-![Registration page](docs/screenshots/register.png)
+![Registration page](assets/screenshots/register.png)
 
 ### Daily attendance
-![Daily attendance list](docs/screenshots/daily_attendance.png)
-
-### Attendance upload and import report
-![Attendance upload](docs/screenshots/attendance_upload.png)
+![Daily attendance list](assets/screenshots/daily_attendance.png)
 
 ### Leave requests
-![Leave requests](docs/screenshots/leave_list.png)
+![Leave requests](assets/screenshots/leave_list.png)
 
 ## Celery and Redis
 
