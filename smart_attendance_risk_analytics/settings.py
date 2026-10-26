@@ -87,7 +87,6 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -104,6 +103,17 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+CORS_ALLOWED_ORIGINS = [ "http://localhost:8000", "http://127.0.0.1:8000" ]
+
+
+# REST FRAMEWORK for uploading images
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ]
+}
 
 # NOTE:
 # psql -U django_user -d smart_attendance_db

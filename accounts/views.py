@@ -12,7 +12,7 @@ def health_check(request):
     payload = {
         "status": "success",
         "message": "Smart Attendance Risk Analytics API is available.",
-        "data": {"service": "smart-attendance-risk-analytics", "phase": 1},
+        "data": {"service": "smart-attendance-risk-analytics"},
         "errors": None,
     }
     serializer = APIResponseSerializer(data=payload)
