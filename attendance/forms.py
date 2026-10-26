@@ -4,6 +4,7 @@ from pathlib import Path
 from django import forms
 from django.utils import timezone
 
+from accounts.forms import BootstrapFormMixin
 from organization.models import Department
 
 from .models import AttendanceCorrection, AttendanceImportBatch, AttendanceLog
@@ -14,7 +15,7 @@ OPEN_STATUSES = (AttendanceCorrection.Status.PENDING, AttendanceCorrection.Statu
 DECISIONS = (("approve", "Approve"), ("reject", "Reject"))
 
 
-class AttendanceUploadForm(forms.ModelForm):
+class AttendanceUploadForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = AttendanceImportBatch
         fields = ("file",)
@@ -30,7 +31,7 @@ class AttendanceUploadForm(forms.ModelForm):
         return file
 
 
-class DailyAttendanceFilterForm(forms.Form):
+class DailyAttendanceFilterForm(BootstrapFormMixin, forms.Form):
     date = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
     department = forms.ModelChoiceField(
         queryset=Department.objects.filter(is_active=True),
@@ -38,7 +39,7 @@ class DailyAttendanceFilterForm(forms.Form):
         empty_label="All departments")
 
 
-class AttendanceCorrectionForm(forms.ModelForm):
+class AttendanceCorrectionForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = AttendanceCorrection
         fields = ("attendance_log", "correction_type", "requested_punch_date", "requested_punch_time", "reason")
@@ -96,8 +97,8 @@ class AttendanceCorrectionForm(forms.ModelForm):
         return cleaned_data
 
 
-class ManagerReviewForm(forms.ModelForm):
-    decision = forms.ChoiceField(choices=DECISIONS, widget=forms.RadioSelect)
+class ManagerReviewForm(BootstrapFormMixin, forms.ModelForm):
+    decision = forms.ChoiceField(choices=DECISIONS)
 
     class Meta:
         model = AttendanceCorrection
@@ -111,8 +112,8 @@ class ManagerReviewForm(forms.ModelForm):
         return cleaned_data
 
 
-class HRFinalizeForm(forms.ModelForm):
-    decision = forms.ChoiceField(choices=DECISIONS, widget=forms.RadioSelect)
+class HRFinalizeForm(BootstrapFormMixin, forms.ModelForm):
+    decision = forms.ChoiceField(choices=DECISIONS)
 
     class Meta:
         model = AttendanceCorrection

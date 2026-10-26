@@ -119,7 +119,7 @@ def get_or_create_employee(record, departments, employees):
     employee = Employee.objects.select_related("user").filter(employee_code=code).first()
     if employee is None:
         first_name, _, last_name = record["employee_name"].partition(" ")
-        user, _ = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             username=code.lower(),
             defaults={
                 "email": f"{code.lower()}@employees.local",
@@ -128,6 +128,9 @@ def get_or_create_employee(record, departments, employees):
                 "role": User.Role.EMPLOYEE,
             },
         )
+        if created:
+            user.set_unusable_password()
+            user.save(update_fields=["password"])
         employee = Employee.objects.create(
             user=user,
             employee_code=code,
