@@ -3,7 +3,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-ynbvm9jx%b2i&8o$=$n-3yes@d7#9&oevc%w*2o-gal#+k55$k'
+SECRET_KEY = ''
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -76,3 +76,10 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# NOTE:
+# psql -U django_user -d smart_attendance_db
+# CREATE DATABASE smart_attendance_db OWNER django_user;
+
+# redis-server
+# celery -A smart_attendance_risk_analytics worker -l info
