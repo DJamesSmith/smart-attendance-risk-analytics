@@ -1,5 +1,6 @@
 from pathlib import Path
 from django import forms
+from accounts.forms import BootstrapFormMixin
 from .models import LeaveRequest
 
 DOCUMENT_EXTENSIONS = (".pdf", ".jpg", ".jpeg", ".png")
@@ -7,7 +8,7 @@ MAX_DOCUMENT_MB = 2
 ACTIVE_STATUSES = (LeaveRequest.Status.PENDING, LeaveRequest.Status.APPROVED)
 
 
-class LeaveRequestForm(forms.ModelForm):
+class LeaveRequestForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = LeaveRequest
         fields = ("leave_type", "start_date", "end_date", "reason", "supporting_document")
