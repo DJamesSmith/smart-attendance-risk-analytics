@@ -1,6 +1,5 @@
 from django.urls import path
-
-from . import api_views
+from organization.views import api_views
 
 urlpatterns = [
     path("departments/", api_views.department_list, name="api-department-list"),

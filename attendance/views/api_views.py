@@ -8,10 +8,10 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsHRAdmin
 from accounts.utils import api_response, form_errors, get_employee_profile, is_hr, is_manager
 
-from .forms import AttendanceCorrectionForm, HRFinalizeForm, ManagerReviewForm
-from .models import AttendanceCorrection, AttendanceImportBatch
-from .serializers import AttendanceCorrectionSerializer, ImportBatchSerializer
-from .services import apply_correction
+from attendance.forms import AttendanceCorrectionForm, HRFinalizeForm, ManagerReviewForm
+from attendance.models import AttendanceCorrection, AttendanceImportBatch
+from attendance.serializers import AttendanceCorrectionSerializer, ImportBatchSerializer
+from attendance.services import apply_correction
 from .views import can_finalize, can_manager_review, can_view_correction, get_correction
 
 INVALID_INPUT = "Please correct the errors below."

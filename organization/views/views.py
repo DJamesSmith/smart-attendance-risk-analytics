@@ -11,8 +11,8 @@ from attendance.processor import EMPLOYEE_CODE_PATTERN
 from attendance.services import build_daily_rows
 from leaves.models import LeaveRequest
 
-from .models import Department, Employee
-from .serializers import EmployeeLookupSerializer
+from organization.models import Department, Employee
+from organization.serializers import EmployeeLookupSerializer
 
 CLOSED_CORRECTIONS = (
     AttendanceCorrection.Status.FINALIZED,

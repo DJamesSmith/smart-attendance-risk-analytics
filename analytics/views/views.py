@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from organization.views import visible_employees
-from .services import dashboard_summary
+from organization.views.views import visible_employees
+from analytics.services import dashboard_summary
 
 
 def dashboard(request):

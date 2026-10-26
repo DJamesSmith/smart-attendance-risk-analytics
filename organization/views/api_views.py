@@ -6,10 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsHROrReadOnly
 from accounts.utils import api_response, form_errors
 
-from .forms import DepartmentForm
-from .models import Department
-from .serializers import DepartmentSerializer, EmployeeLookupSerializer
-from .views import visible_employees
+from organization.forms import DepartmentForm
+from organization.models import Department
+from organization.serializers import DepartmentSerializer, EmployeeLookupSerializer
+from organization.views.views import visible_employees
 
 INVALID_INPUT = "Please correct the errors below."
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import api_views
+from attendance.views import api_views
 
 urlpatterns = [
     path("imports/", api_views.import_list, name="api-import-list"),

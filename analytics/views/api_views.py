@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from accounts.utils import api_response
-from organization.views import visible_employees
-from .serializers import RiskScoreSerializer
-from .services import latest_risk_scores
+from organization.views.views import visible_employees
+from analytics.serializers import RiskScoreSerializer
+from analytics.services import latest_risk_scores
 
 
 @api_view(["GET"])
