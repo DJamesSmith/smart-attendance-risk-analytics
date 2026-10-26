@@ -20,7 +20,7 @@ from attendance.models import AttendanceLog
 from leaves.models import LeaveRequest
 from organization.models import Department, Employee, ShiftRule
 
-DEMO_PASSWORD = os.getenv("SEED_USER_PASSWORD", "Demo@12345")
+DEMO_PASSWORD = os.getenv("SEED_USER_PASSWORD")
 SAMPLE_DOCUMENT = BASE_DIR / "datasets" / "sample" / "sample_medical_certificate.pdf"
 
 DEPARTMENTS = [
@@ -235,7 +235,7 @@ def seed_attendance(employees):
     return created_count
 
 
-def main():
+if __name__ == "__main__":
     with transaction.atomic():
         departments = seed_departments()
         seed_shift_rules()
@@ -250,7 +250,3 @@ def main():
     print(f"New users log in with the password: {DEMO_PASSWORD}")
     print(f"Stored value for {sample.username} starts with: {sample.password[:30]}...")
     print("Check in PostgreSQL: SELECT username, role, password FROM accounts_user;")
-
-
-if __name__ == "__main__":
-    main()
