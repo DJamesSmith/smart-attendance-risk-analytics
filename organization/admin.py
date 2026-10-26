@@ -1,3 +1,26 @@
 from django.contrib import admin
+from .models import Department, Employee, ShiftRule
 
-# Register your models here.
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ("name", "code", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("name", "code")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(Employee)
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ("employee_code", "user", "department", "manager", "is_active")
+    list_filter = ("department", "is_active")
+    search_fields = ("employee_code", "user__first_name", "user__last_name", "user__email")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(ShiftRule)
+class ShiftRuleAdmin(admin.ModelAdmin):
+    list_display = ("name", "shift_start", "shift_end", "grace_minutes", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+    readonly_fields = ("created_at", "updated_at")
