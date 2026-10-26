@@ -16,7 +16,9 @@ The project is designed as a locally executable prototype for the Django 5 with 
 - [Local Installation](#local-installation)
 - [Environment Variables](#environment-variables)
 - [Database Setup and Migrations](#database-setup-and-migrations)
+- [Dummy Data and Demo Users](#dummy-data-and-demo-users)
 - [Running the Application](#running-the-application)
+- [Screenshots](#screenshots)
 - [Celery and Redis](#celery-and-redis)
 - [Machine Learning, NLP, and Deep Learning](#machine-learning-nlp-and-deep-learning)
 - [API Documentation and Testing](#api-documentation-and-testing)
@@ -297,6 +299,43 @@ python manage.py createsuperuser
 
 Review generated migrations before applying them. Commit the migration files to Git so the evaluator can recreate the schema reliably.
 
+## Dummy Data and Demo Users
+
+Two helper scripts live in the `datasets/` folder. Run them after `python manage.py migrate`:
+
+```bash
+cd datasets
+python seed_data.py
+python generate_sample_data.py
+cd ..
+```
+
+- `seed_data.py` inserts dummy records into PostgreSQL: departments, shift rules, users with employee profiles (HR Admin, Managers, Employees), and leave requests. It is safe to run more than once; existing records are updated, not duplicated.
+- `generate_sample_data.py` recreates the sample attendance files in `datasets/sample/` (`attendance_sample.csv`, `attendance_sample.xlsx`, and the edge-case files). Upload `attendance_sample.csv` from the web app to import attendance for the seeded employees.
+
+### Demo user password
+
+> **Every dummy user created by `seed_data.py` has the password `Demo@12345`.**
+>
+> This password exists only because this is dummy data for testing and evaluation. The application itself never assigns passwords: real users choose their own on the Register page, and the superuser password is the one you enter in `createsuperuser`. All passwords are stored as Django password hashes (`pbkdf2_sha256$...`), never as plain text.
+
+| Username | Role | Department |
+|---|---|---|
+| `hra001` | HR Admin | Human Resources |
+| `mgr101` | Manager | Customer Support |
+| `mgr102` | Manager | Engineering |
+| `emp1001`, `emp1002` | Employee | Customer Support |
+| `emp1003`, `emp1004` | Employee | Engineering |
+| `emp1005` | Employee | Human Resources |
+
+To reset every user (including any registered later) to the demo password, run from the project root:
+
+```bash
+python manage.py shell -c "from accounts.models import User; users = list(User.objects.all()); [user.set_password('Demo@12345') for user in users]; User.objects.bulk_update(users, ['password']); print(len(users), 'passwords set to Demo@12345')"
+```
+
+Note that this also resets the superuser's password.
+
 ## Running the Application
 
 ### Django development server
@@ -305,7 +344,7 @@ Review generated migrations before applying them. Commit the migration files to 
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/`.
+Open `http://127.0.0.1:8000/accounts/login/` to log in, or `http://127.0.0.1:8000/accounts/register/` to create an account.
 
 ### Django administration
 
@@ -314,6 +353,25 @@ Open `http://127.0.0.1:8000/admin/` and sign in with the superuser credentials c
 ### Static files and media
 
 During development, configure Django to serve static assets and uploaded media correctly. Do not commit real employee documents or sensitive attendance records.
+
+## Screenshots
+
+Replace each placeholder image with a real screenshot saved in `docs/screenshots/` using the same file name.
+
+### Login
+![Login page](docs/screenshots/login.png)
+
+### Register
+![Registration page](docs/screenshots/register.png)
+
+### Daily attendance
+![Daily attendance list](docs/screenshots/daily_attendance.png)
+
+### Attendance upload and import report
+![Attendance upload](docs/screenshots/attendance_upload.png)
+
+### Leave requests
+![Leave requests](docs/screenshots/leave_list.png)
 
 ## Celery and Redis
 
